@@ -227,17 +227,19 @@ exit
 docker stop app-database
 docker rm app-database
 ```
-
 Hint: Keep mysql Image As it so large "1.29 GB" No need to download it  again
+
 
 # -------------------------- Problem 4 --------------------------
 
 # Problem 4: Web Server + Static Files + Docker commit 
 
 
+```text
 --> Create mkdir problem-4 then cd problem-4
 --> manually craete html.index 
 --> add content inside it 
+```
 
 ```text
 <!DOCTYPE html>
@@ -267,9 +269,10 @@ nginx
 | 80   | Port inside Nginx container |
 | -p   | Publish/Expose Link port from HOST_PORT 8080 to CONTAINER_PORT 80 |
 ```
+```text
 -p --> p small for developer customize ports
 -P --> P Capital Docker automatic choose ports
-
+```
 
 ## Test Public Link
 
@@ -291,8 +294,10 @@ output--> Successfully copied + then Refresh Browser to see html content "Hello 
 ```bash
 docker commit nginx-container my-nginx:v1
 ```
+```text
 --> docker commit nginx-container IMAGE_NAME : Tag
 --> For best Practice in Production use Dockerfile instead of docker commit
+```
 
 ## Check Images
 
@@ -325,3 +330,154 @@ my-nginx:v1
 docker stop test-nginx
 docker rm test-nginx
 ```
+
+# -------------------------- Problem 5 --------------------------
+
+
+# Problem 5: Python app + Docker file + Multi-stage build + Push to docker hub
+
+```text
+--> mkdir problem-5 then cd problem-5
+--> manually craete  app.py   
+--> add content inside it --> print("Hello From Docker Python App")
+--> Test Locally --> python app.py and shoud print Hello From Docker Python App
+--> Hint Python Must be installed 
+
+-->  manually craete Dockerfile without extention 
+```
+
+```text
+FROM python:3.12
+
+WORKDIR /app
+
+COPY app.py .
+
+CMD ["python", "app.py"]
+```
+
+```text
+| Command | Meaning           |
+| ------- | ----------------- |
+| FROM    | base image        |
+| WORKDIR | working directory |
+| COPY    | copy files        |
+| CMD     | startup command   |
+```
+
+## Build Image
+
+```bash
+docker build -t python-app .
+```
+
+```text
+| Part       | Meaning        |
+| ---------- | -------------- |
+| -t         | image tag      |
+| python-app | image name     |
+| .          | current folder |
+```
+
+### check images
+```bash
+docker images
+```
+--> python-app  1.6 GB !! -> Very Large Size
+
+## Run Container
+
+```bash
+docker run python-app
+```
+output --> Hello From Docker Python App
+
+### Bonus — Smaller Image Using Multi-Stage
+
+```dockerfile
+FROM python:3.12-slim AS builder
+
+WORKDIR /app
+
+COPY app.py .
+
+FROM python:3.12-alpine
+
+WORKDIR /app
+
+COPY --from=builder /app/app.py .
+
+CMD ["python", "app.py"]
+```
+
+```text
+| Part       | Meaning        |
+| ---------- | -------------- |
+| Slim       | small Python image|
+| Alpine     | Linux minimal |
+```
+
+## Build Smaller Image
+
+```bash
+docker build -t python-app-small .
+```
+
+```text
+docker images --> check images & Compare Sizes 
+```
+--> From 1.6 GB  to 74.3 MB
+
+## Login & Push To Docker Hub
+
+```bash
+docker login
+
+docker tag python-app-small USERNAME/python-app:v1
+
+docker push USERNAME/python-app:v1
+```
+
+```text
+USERNAME --> samir079
+Hint: U can Easly Sign Up From Website : [Docker Hub Official Website](https://hub.docker.com) So no need to enter username & password in docker login Step
+
+Already Pushed So if any other device need to use it -->> docker run samir079/python-app:v1
+```
+
+## Docker File Content 
+
+
+```text
+# =========================
+# Version 2  = Small Size + Multi-stage build
+# =========================
+
+FROM python:3.12-slim AS builder
+
+WORKDIR /app
+
+COPY app.py .
+
+FROM python:3.12-alpine
+
+WORKDIR /app
+
+COPY --from=builder /app/app.py .
+
+CMD ["python", "app.py"]
+
+
+# =========================
+# Version 1 = Large Size + Hint: There is no Multi line option in docker file
+# =========================
+#
+# FROM python:3.12
+#
+# WORKDIR /app
+#
+# COPY app.py .
+#
+# CMD ["python", "app.py"]
+```
+
