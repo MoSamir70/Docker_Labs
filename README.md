@@ -117,7 +117,7 @@ docker rm -f mycontainer
 
 # -------------------------- Problem 3 --------------------------
 
-# Problem 3 : MySQL + background containers + environment variables
+### Problem 3: MySQL+ background containers + environment variables For Password
 
 ## Run MySQL Container
 
@@ -219,8 +219,9 @@ output ->
 ## Exit container
 
 ```bash
-exit  from mysql> then bash-5.1# 
+exit  
 ```
+---> from mysql> then bash-5.1# 
 
 ```bash
 docker stop app-database
@@ -228,3 +229,99 @@ docker rm app-database
 ```
 
 Hint: Keep mysql Image As it so large "1.29 GB" No need to download it  again
+
+# -------------------------- Problem 4 --------------------------
+
+# Problem 4: Web Server + Static Files + Docker commit 
+
+
+--> Create mkdir problem-4 then cd problem-4
+--> manually craete html.index 
+--> add content inside it 
+
+```text
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Docker Lab </title>
+</head>
+<body>
+    <h1>Hello From Docker Nginx -> Problem 4 </h1>
+</body>
+</html>
+```
+
+## Run Nginx Container
+
+```bash
+docker run -d \
+--name nginx-container \
+-p 8080:80 \
+nginx
+```
+
+```text
+| Part | Meaning                     |
+| ---- | --------------------------- |
+| 8080 | Port on Windows             |
+| 80   | Port inside Nginx container |
+| -p   | Publish/Expose Link port from HOST_PORT 8080 to CONTAINER_PORT 80 |
+```
+-p --> p small for developer customize ports
+-P --> P Capital Docker automatic choose ports
+
+
+## Test Public Link
+
+```text
+http://localhost:8080 
+```
+--output--> Welcome to nginx!
+
+
+## Copy HTML file
+
+```bash
+docker cp index.html nginx-container:/usr/share/nginx/html/index.html
+```
+output--> Successfully copied + then Refresh Browser to see html content "Hello From Docker Nginx-> Problem 4"
+
+## Commit Container As New Image
+
+```bash
+docker commit nginx-container my-nginx:v1
+```
+--> docker commit nginx-container IMAGE_NAME : Tag
+--> For best Practice in Production use Dockerfile instead of docker commit
+
+## Check Images
+
+```bash
+docker images
+```
+--> my-nginx Must be existed
+
+## Remove old Container 
+
+```bash
+docker stop nginx-container
+docker rm nginx-container
+```
+--> Remove old Container if old & new has same name otherwise no need for this step
+--> For best practice remove old to prevent using -p 8080:80 twise -> so U will get an error
+
+## Test New Image / Run committed image 
+
+```bash
+docker run -d \
+--name test-nginx \
+-p 8080:80 \
+my-nginx:v1
+```
+
+## Remove Test Container 
+
+```bash
+docker stop test-nginx
+docker rm test-nginx
+```
