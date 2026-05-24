@@ -448,17 +448,14 @@ docker push USERNAME/python-app:v1
 ```
 
 
-
+```bash
 USERNAME --> samir079  
 
-Hint: You can easily sign up from:  
-[Docker Hub Official Website](https://hub.docker.com)  
+Hint: You can easily sign up from:[Docker Hub Official Website](https://hub.docker.com)  
 
 So no need to enter username & password in docker login step.
 
-Already pushed image, so if any other device needs to use it:
-```bash
-docker run samir079/python-app:v1
+Already pushed image, so if any other device needs to use it: docker run samir079/python-app:v1
 ```
 
 
