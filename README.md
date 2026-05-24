@@ -207,6 +207,7 @@ hint: Passward in Hidden just Paste it then hit enter --- output --> Welcome to 
 SHOW DATABASES;
 ```
 output ->
+```text
 +--------------------+
 | Database           |
 +--------------------+
@@ -215,6 +216,7 @@ output ->
 | performance_schema |
 | sys                |
 +--------------------+
+```
 
 ## Exit container
 
@@ -312,8 +314,11 @@ docker images
 docker stop nginx-container
 docker rm nginx-container
 ```
+
+```text
 --> Remove old Container if old & new has same name otherwise no need for this step
 --> For best practice remove old to prevent using -p 8080:80 twise -> so U will get an error
+```
 
 ## Test New Image / Run committed image 
 
@@ -345,6 +350,8 @@ docker rm test-nginx
 
 -->  manually craete Dockerfile without extention 
 ```
+
+## Dockerfile Content
 
 ```text
 FROM python:3.12
@@ -394,6 +401,8 @@ output --> Hello From Docker Python App
 
 ### Bonus — Smaller Image Using Multi-Stage
 
+#### Update Docker file
+
 ```dockerfile
 FROM python:3.12-slim AS builder
 
@@ -438,12 +447,20 @@ docker tag python-app-small USERNAME/python-app:v1
 docker push USERNAME/python-app:v1
 ```
 
-```text
-USERNAME --> samir079
-Hint: U can Easly Sign Up From Website : [Docker Hub Official Website](https://hub.docker.com) So no need to enter username & password in docker login Step
 
-Already Pushed So if any other device need to use it -->> docker run samir079/python-app:v1
+
+USERNAME --> samir079  
+
+Hint: You can easily sign up from:  
+[Docker Hub Official Website](https://hub.docker.com)  
+
+So no need to enter username & password in docker login step.
+
+Already pushed image, so if any other device needs to use it:
+```bash
+docker run samir079/python-app:v1
 ```
+
 
 ## Docker File Content 
 
